@@ -1,10 +1,12 @@
 import nodemailer from "nodemailer";
 
+console.log("EMAIL_USER =", process.env.EMAIL_USER);
+console.log("EMAIL_PASS EXISTS =", process.env.EMAIL_PASS ? "YES" : "NO");
+
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 587,
   secure: false,
-  requireTLS: true,
 
   auth: {
     user: process.env.EMAIL_USER,
@@ -12,38 +14,34 @@ const transporter = nodemailer.createTransport({
   },
 
   tls: {
-    family: 4,
     rejectUnauthorized: false,
   },
-
-  connectionTimeout: 30000,
-  greetingTimeout: 30000,
-  socketTimeout: 30000,
 });
 
-export default async function sendOTPEmail(email, otp) {
-  console.log("STEP 1");
-
-  try {
-    console.log("STEP 2");
-
-    const info = await transporter.sendMail({
-      from: `"EsecGPT Support" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: "Password Reset OTP",
-      html: `
-        <h2>Password Reset</h2>
-        <h1>${otp}</h1>
-        <p>This OTP expires in 10 minutes.</p>
-      `,
-    });
-
-    console.log("STEP 3");
-    console.log(info);
-    return info;
-  } catch (err) {
-    console.log("STEP ERROR");
-    console.error(err);
-    throw err;
+transporter.verify((err) => {
+  if (err) {
+    console.log("❌ VERIFY ERROR");
+    console.log(err);
+  } else {
+    console.log("✅ Mailer Ready");
   }
-}
+});
+
+const sendOTPEmail = async (email, otp) => {
+  console.log("📧 Sending OTP to:", email);
+
+  const info = await transporter.sendMail({
+    from: `"EsecGPT" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: "Password Reset OTP",
+    html: `
+      <h2>Password Reset</h2>
+      <h1>${otp}</h1>
+      <p>This OTP expires in 10 minutes.</p>
+    `,
+  });
+
+  console.log(info);
+};
+
+export default sendOTPEmail;
