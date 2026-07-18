@@ -5,13 +5,11 @@ console.log("EMAIL_PASS EXISTS =", process.env.EMAIL_PASS ? "YES" : "NO");
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
-  // ✅ CHANGED: Use port 465 and secure: true for cloud servers
   port: 465, 
   secure: true, 
-  
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    pass: process.env.EMAIL_PASS, // Ye ab tumhara App Password use karega
   },
   tls: {
     rejectUnauthorized: false,
