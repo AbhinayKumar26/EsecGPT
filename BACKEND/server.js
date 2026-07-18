@@ -19,6 +19,11 @@ import authRoutes from "./routes/auth.js";
 
 const app = express();
 
+// Add this to server.js to fix the 404 error on the main URL
+app.get('/', (req, res) => {
+  res.status(200).send('Esec_GPT Backend API is successfully running on Render!');
+});
+
 // Middlewares
 const allowedOrigins = [
   "http://localhost:5173",
