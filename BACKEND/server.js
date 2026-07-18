@@ -1,9 +1,16 @@
-console.log("🔥 RUNNING server.js");
 
 
 import express from "express";
 import cors from "cors";
 import "dotenv/config";
+
+console.log("EMAIL_USER =", process.env.EMAIL_USER);
+console.log(
+  "EMAIL_PASS EXISTS =",
+  process.env.EMAIL_PASS ? "YES" : "NO"
+);
+
+console.log("🔥 RUNNING server.js");
 
 import chatRoutes from "./routes/chat.js";
 
