@@ -82,5 +82,5 @@ export async function sendOTPEmail(email, otp) {
   console.log("✅ Email Sent:", info.messageId);
 }
 
-export default transporter;
+export default sendOTPEmail;
 
