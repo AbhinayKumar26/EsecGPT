@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "create-vite": "^8.2.0"
+    "create-vite": "^8.2.0",
+    "resend": "^6.17.2"
   }
 }

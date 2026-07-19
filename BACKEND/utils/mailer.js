@@ -1,48 +1,30 @@
-import nodemailer from "nodemailer";
+import { Resend } from 'resend';
 
-console.log("EMAIL_USER =", process.env.EMAIL_USER);
-console.log("EMAIL_PASS EXISTS =", process.env.EMAIL_PASS ? "YES" : "NO");
-
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465, 
-  secure: true, 
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS, // Ye ab tumhara App Password use karega
-  },
-  tls: {
-    rejectUnauthorized: false,
-  },
-});
-
-transporter.verify((err) => {
-  if (err) {
-    console.log("❌ VERIFY ERROR:", err.message);
-  } else {
-    console.log("✅ Mailer Ready");
-  }
-});
+// Initialize Resend with your API Key from .env
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendOTPEmail = async (email, otp) => {
-  console.log("📧 Sending OTP to:", email);
+  console.log("📧 Sending OTP via Resend to:", email);
 
   try {
-    const info = await transporter.sendMail({
-      from: `"EsecGPT" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: "Password Reset OTP",
+    const data = await resend.emails.send({
+      from: 'EsecGPT <onboarding@resend.dev>', // Note: Jab tak tum domain verify nahi karte, tumhe 'onboarding@resend.dev' use karna hoga
+      to: [email],
+      subject: 'Password Reset OTP',
       html: `
-        <h2>Password Reset</h2>
-        <h1>${otp}</h1>
-        <p>This OTP expires in 10 minutes.</p>
+        <div style="font-family: sans-serif;">
+          <h2>Password Reset Request</h2>
+          <p>Your OTP code is:</p>
+          <h1 style="color: #4A90E2;">${otp}</h1>
+          <p>This OTP expires in 10 minutes.</p>
+        </div>
       `,
     });
-    console.log("✅ Email sent successfully:", info.messageId);
-    return info;
+
+    console.log("✅ Email sent successfully:", data);
+    return data;
   } catch (error) {
-    console.error("❌ NodeMailer Error:");
-    console.error(error.message);
+    console.error("❌ Resend Error:", error);
     throw new Error("Failed to send OTP email");
   }
 };
